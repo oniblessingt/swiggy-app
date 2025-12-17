@@ -2,71 +2,73 @@ Deploying the Swiggy Clone App with Terraform, Kubernetes and GitHub Actions.
 
 
 [A] Let's use Terraform to create an EC2 instance for EC2 Runner, Docker and SonarQube
-1 -- Content Of main.tf
+Content Of main.tf
     ```bash
-    resource "aws_instance" "web" {
-    ami                    = "ami-0287a05f0ef0e9d9a"      
-    instance_type          = "t3.medium"
-    key_name               = "newkey.pem"              
-    vpc_security_group_ids = [aws_security_group.GitHubAction-VM-SG.id]
-    user_data              = templatefile("./install.sh", {})
 
-    tags = {
-        Name = "GitHubAction-SonarQube"
-    }
+            resource "aws_instance" "web" {
+            ami                    = "ami-0287a05f0ef0e9d9a"      
+            instance_type          = "t3.medium"
+            key_name               = "newkey.pem"              
+            vpc_security_group_ids = [aws_security_group.GitHubAction-VM-SG.id]
+            user_data              = templatefile("./install.sh", {})
 
-    root_block_device {
-        volume_size = 40
-    }
-    }
+            tags = {
+                Name = "GitHubAction-SonarQube"
+            }
 
-    resource "aws_security_group" "GitHubAction-VM-SG" {
-    name        = "GitHubAction-VM-SG"
-    description = "Allow TLS inbound traffic"
+            root_block_device {
+                volume_size = 40
+                }
+            }
 
-    ingress = [
-        for port in [22, 80, 443, 8080, 9000, 3000] : {
-        description      = "inbound rules"
-        from_port        = port
-        to_port          = port
-        protocol         = "tcp"
-        cidr_blocks      = ["0.0.0.0/0"]
-        ipv6_cidr_blocks = []
-        prefix_list_ids  = []
-        security_groups  = []
-        self             = false
-        }
-    ]
+            resource "aws_security_group" "GitHubAction-VM-SG" {
+            name        = "GitHubAction-VM-SG"
+            description = "Allow TLS inbound traffic"
 
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+            ingress = [
+                for port in [22, 80, 443, 8080, 9000, 3000] : {
+                description      = "inbound rules"
+                from_port        = port
+                to_port          = port
+                protocol         = "tcp"
+                cidr_blocks      = ["0.0.0.0/0"]
+                ipv6_cidr_blocks = []
+                prefix_list_ids  = []
+                security_groups  = []
+                self             = false
+                }
+            ]
 
-    tags = {
-        Name = "GitHubAction-VM-SG"
-        }
-    }
+            egress {
+                from_port   = 0
+                to_port     = 0
+                protocol    = "-1"
+                cidr_blocks = ["0.0.0.0/0"]
+            }
+
+            tags = {
+                Name = "GitHubAction-VM-SG"
+                }
+            }
+
     ```
 
 2 -- Content Of provider.tf
     ```bash
-    terraform {
-    required_providers {
-        aws = {
-        source  = "hashicorp/aws"
-        version = "~> 5.0"
+        terraform {
+        required_providers {
+            aws = {
+            source  = "hashicorp/aws"
+            version = "~> 5.0"
+                }
             }
         }
-    }
     ```
 **configure the aws provider:**
     ```bash
-    provider "aws" {
-    region = "us-east-1"     
-    }
+        provider "aws" {
+        region = "us-east-1"     
+        }
     ```
 **Step 2: Clone the Code:**
 
