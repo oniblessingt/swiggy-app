@@ -66,6 +66,7 @@ Content Of main.tf
     ```
 **configure the aws provider:**
     ```bash
+    
             provider "aws" {
             region = "us-east-1"     
             }
@@ -80,7 +81,8 @@ Content Of main.tf
     ```
 
 **Step 3: Content of install.sh:**
-    ```bash
+        ```bash
+
             #!/bin/bash
             sudo apt update -y
             wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
@@ -88,8 +90,7 @@ Content Of main.tf
             sudo apt update -y
             sudo apt install temurin-17-jdk -y
             /usr/bin/java --version
-
-    ```
+        ```
 
 **Step 3: Install Docker and Run the App Using a Container:**
 
